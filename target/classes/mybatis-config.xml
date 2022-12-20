@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<typeAliases>
+	
+	<typeAlias type="com.icia.kpl.dto.MEMBER" alias="member"/>
+	<typeAlias type="com.icia.kpl.dto.MOVIE" alias="movie"/>
+	<typeAlias type="com.icia.kpl.dto.BRANCH" alias="branch"/>
+	<typeAlias type="com.icia.kpl.dto.LIKE" alias="like"/>
+	<typeAlias type="com.icia.kpl.dto.CUSTOMER" alias="customer"/>
+	<typeAlias type="com.icia.kpl.dto.PAGE" alias="paging"/>
+	<typeAlias type="com.icia.kpl.dto.THEATER" alias="theater"/>
+	<typeAlias type="com.icia.kpl.dto.MOVIETIME" alias="movietime"/>
+	<typeAlias type="com.icia.kpl.dto.CMF023DTO" alias="cmf023dto"/>
+	<typeAlias type="com.icia.kpl.dto.CMF024DTO" alias="cmf024dto"/>
+	<typeAlias type="com.icia.kpl.dto.SEQDTO" alias="seqdto"/>
+	<typeAlias type="com.icia.kpl.dto.OFFEVENT" alias="offevent"/>
+	<typeAlias type="com.icia.kpl.dto.CUPON" alias="cupon"/>
+	<typeAlias type="com.icia.kpl.dto.PRICE" alias="price"/>
+	<typeAlias type="com.icia.kpl.dto.CMF026DTO" alias="cmf026dto"/>
+	<typeAlias type="com.icia.kpl.dto.CMF032DTO" alias="cmf032dto"/>
+	<typeAlias type="com.icia.kpl.dto.SEARCH" alias="search"/>
+	<typeAlias type="com.icia.kpl.dto.CMF033PASSDTO" alias="cmf033passdto"/>
+	<typeAlias type="com.icia.kpl.dto.CMF039DTO" alias="cmf039dto"/>
+	<typeAlias type="com.icia.kpl.dto.CMF045DTO" alias="cmf045dto"/>
+	<typeAlias type="com.icia.kpl.dto.CMF047DTO" alias="cmf047dto"/>
+	
+	</typeAliases>
+
+</configuration>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Member">
+
+
+
+	<!-- 회원가입 -->
+	<insert id="MMF005" parameterType="member">
+		INSERT INTO MEMBERT(MID, MPW,
+		MNAME, MBIRTH, MGENDER, MPHONE, MADDR,
+		MPROFILENAME, MMODE, MPOINT)
+
+		VALUES(#{mId}, #{mPw}, #{mName}, #{mBirth},
+		#{mGender},#{mPhone},
+		#{mAddr},
+		'nopic.png', 'user', 0)
+	</insert>
+
+	<!-- 아이디 중복확인 -->
+	<select id="MMF002" parameterType="String" resultType="String">
+		SELECT MID
+		FROM MEMBERT WHERE MID = #{memId}
+	</select>
+
+	<!-- 로그인 -->
+	<select id="MMF007" parameterType="member" resultType="String">
+		SELECT MPW
+		FROM MEMBERT WHERE MID = #{mId}
+	</select>
+
+	<!-- 내 정보 보기 -->
+	<select id="MMF009" parameterType="String" resultType="member">
+		SELECT *
+		FROM MEMBERT WHERE MID = #{mId}
+	</select>
+
+	<!-- 회원 수정 -->
+	<update id="MMF011" parameterType="member">
+		UPDATE MEMBERT SET MPW =
+		#{mPw} , MNAME = #{mName} , MBIRTH = #{mBirth},
+		MGENDER = #{mGender},
+		MPHONE = #{mPhone} , MADDR = #{mAddr}, MPROFILENAME = #{mProFileName},
+		MEMAIL=#{mEmail} WHERE MID = #{mId}
+	</update>
+
+	<!-- 회원 탈퇴 -->
+	<delete id="MMF012" parameterType="String">
+		DELETE FROM MEMBERT WHERE MID
+		= #{mId}
+	</delete>
+
+	<!-- 로그인시 유저모드 가져오기 -->
+	<select id="MMF013" parameterType="member" resultType="String">
+		SELECT
+		MMODE
+		FROM MEMBERT WHERE MID = #{mId}
+	</select>
+
+	<!-- 비밀번호 설정을 위한 정보 확인 -->
+	<select id="MMF015" parameterType="member" resultType="int">
+		SELECT
+		COUNT(*)
+		FROM MEMBERT WHERE MID = #{mId} AND MPHONE = #{mPhone} AND
+		MNAME = #{mName}
+	</select>
+
+	<!-- 비밀번호 재설정 -->
+	<update id="MMF017" parameterType="member">
+		UPDATE MEMBERT SET MPW =
+		#{mPw} WHERE MID = #{mId}
+	</update>
+
+
+	<!-- 회원 목록 -->
+	<select id="MMF018" parameterType="paging" resultType="member">
+		SELECT *
+		FROM MEMBERLIST WHERE RN BETWEEN #{startRow} AND #{endRow}
+	</select>
+
+	<!-- 회원 목록 갯수 -->
+	<select id="MMF019" resultType="int">
+		SELECT COUNT(*) FROM MEMBERT
+	</select>
+
+	<!-- 회원 검색 -->
+	<select id="MMF020" parameterType="search" resultType="member">
+		SELECT *
+		FROM MEMBERLIST WHERE ${category} LIKE '%'||#{keyword}||'%' AND (RN
+		BETWEEN #{startRow} AND #{endRow})
+	</select>
+
+	<!-- 회원 검색시 회원목록 갯수 -->
+	<select id="MMF021" resultType="int">
+		SELECT COUNT(*) FROM MEMBERT WHERE ${category} LIKE '%'||#{keyword}||'%'
+	</select>
+
+	<!-- 관리자 변경 -->
+	<update id="MMF022" parameterType="member">
+		UPDATE MEMBERT SET MMODE = ('admin') WHERE MID = #{mId}
+	</update>
+
+
+</mapper>

@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 회원가입 -->
+<mapper namespace="Movie">
+	<!-- 영화 정보 저장 -->
+	<insert id="CMF003" parameterType="movie">
+		INSERT INTO MOVIE VALUES
+		(MCODE_SEQ.NEXTVAL,#{mTitle}, #{mOpen}, #{mRunTime}, #{mAge},
+		#{mPoster}, #{mPreView}, #{mGenre})
+	</insert>
+
+	<!-- 영화정보 상세보기 불러오기 -->
+	<select id="CMF004" parameterType="int" resultType="movie">
+		SELECT * FROM
+		MOVIE WHERE MCODE = #{mCode}
+	</select>
+
+	<!-- 영화목록 불러오기 -->
+	<select id="CMF005" resultType="movie">
+		SELECT *
+		FROM MOVIELIST
+	</select>
+
+	<!-- 좋아요했는지 체크 CMF006_1 -->
+	<select id="CMF006_1" parameterType="like" resultType="int">
+		SELECT
+		COUNT(*)
+		FROM MOVIELIKE WHERE MLMOVIE = #{MLMovie} AND MLID = #{MLId}
+	</select>
+
+	<!-- 좋아요 갯수 가져오기 -->
+	<select id="CMF006" parameterType="int" resultType="int">
+		SELECT
+		COUNT(*)
+		FROM MOVIELIKE WHERE MLMOVIE = #{mCode}
+	</select>
+
+	<!-- 좋아요 추가 -->
+	<insert id="CMF006_2" parameterType="like">
+		INSERT INTO MOVIELIKE
+		VALUES(#{MLMovie}, #{MLId})
+	</insert>
+
+	<!-- 좋아요 삭제 CMF006_3 -->
+	<delete id="CMF006_3" parameterType="like">
+		DELETE FROM MOVIELIKE WHERE
+		MLMOVIE = #{MLMovie} AND MLID = #{MLId}
+	</delete>
+	<!-- 지점 추가 -->
+	<insert id="CMF008" parameterType="branch">
+		INSERT INTO BRANCH VALUES
+		(#{bName}, #{bAddr}, #{bLocation}, #{bCall})
+	</insert>
+
+	<!-- 지점 정보 불러오기 ajax CMF010 -->
+	<select id="CMF010" parameterType="String" resultType="branch">
+		SELECT *
+		FROM
+		BRANCH WHERE BLOCATION = #{bLocation}
+	</select>
+
+	<!-- 지점 이름 불러오기 -->
+	<select id="CMF011" resultType="String">
+		SELECT BNAME FROM BRANCH
+	</select>
+
+	<!-- 지점에 상영관 추가시 상영관 번호 넘버링 -->
+	<select id="CMF012" parameterType="String" resultType="int">
+		SELECT
+		COUNT(*) FROM THEATER WHERE TNAME = #{bName}
+	</select>
+
+	<!-- 상영관 추가 -->
+	<select id="CMF013" parameterType="theater">
+		INSERT INTO THEATER VALUES
+		(TCODE_SEQ.NEXTVAL, #{tName}, #{tNum}, #{tType}, #{tLineEnd},
+		#{tRowEnd}, #{tSize}, #{tMCode})
+	</select>
+
+	<!-- 기존 상영시간표 삭제 -->
+	<delete id="CMF016">
+		DELETE FROM BOOKTICKET
+	</delete>
+
+	<!-- 상영시간표 시퀀스 삭제 -->
+	<select id="CMF016_1" parameterType="seqdto" resultType="String">
+		${seq}
+	</select>
+
+	<!-- 상영시간표 시퀀스 생성 -->
+	<select id="CMF016_2" parameterType="seqdto" resultType="String">
+		${seq}
+	</select>
+
+	<!-- 상영관 리스트 가져오기 -->
+	<select id="CMF017" resultType="theater">
+		SELECT * FROM THEATER
+	</select>
+
+	<!-- 기존 상영시간표가 있는지 확인 -->
+	<select id="CMF018" resultType="int">
+		SELECT COUNT(*) FROM BOOKTICKET
+	</select>
+
+	<!-- 영화 러닝타임 구해오기 -->
+	<select id="CMF019" parameterType="int" resultType="String">
+		SELECT
+		MRUNTIME FROM MOVIE WHERE MCODE = #{tmCode}
+	</select>
+
+	<!-- 영화 상영 시간표 넣기 -->
+	<insert id="CMF020" parameterType="movietime">
+		INSERT INTO BOOKTICKET VALUES
+		(BCODE_SEQ.NEXTVAL, #{BTCode}, #{bDate}, #{bTime}, #{bSeat})
+	</insert>
+
+	<!-- 지점에 현재 상영중인 영화 리스트 가져오기 -->
+	<select id="CMF022" parameterType="String" resultType="String">
+		SELECT
+		DISTINCT movie.mtitle FROM theater, movie WHERE theater.tmcode =
+		movie.mcode AND theater.tname = #{branchName}
+	</select>
+
+	<!-- 해당 지점에 해당 상영관 영화를 상영하는 관정보 -->
+	<select id="CMF023" parameterType="cmf023dto"
+		resultType="cmf023dto">
+		SELECT t.tnum, movie.mcode, t.ttype, t.tsize from theater
+		t, movie where t.tmcode = movie.mcode and t.tname = #{tName} and
+		movie.mtitle = #{mTitle}
+	</select>
+
+	<!-- 상영시간표3 ajax 상영시간정보 -->
+	<select id="CMF024" parameterType="cmf024dto"
+		resultType="cmf024dto">
+		SELECT bt.btime, bt.bseat, bt.bcode FROM bookticket bt,
+		theater t, movie mo
+		WHERE bt.btcode = t.tcode and mo.mcode = t.tmcode
+		and t.tname= #{tName} and
+		bt.bdate= #{bDate} and mo.mcode=#{mCode} and
+		t.tnum=#{tNum} ORDER BY
+		bt.btime ASC
+	</select>
+
+	<!-- 상영하는 상영관 지역 표시ajax -->
+	<select id="CMF026" parameterType="int" resultType="cmf026dto">
+		SELECT
+		DISTINCT br.blocation FROM theater t, movie mo, branch br
+		WHERE
+		mo.mcode = t.tmcode and br.bname=t.tname and mo.mcode= #{mCode}
+	</select>
+
+	<!-- 유저 나이 구해오기 ajax -->
+	<select id="CMF028" parameterType="String" resultType="String">
+		SELECT
+		MBIRTH FROM MEMBERT WHERE MID = #{user}
+	</select>
+
+	<!--상영하는 상영관 표시 ajax -->
+	<select id="CMF029" parameterType="cmf026dto"
+		resultType="cmf026dto">
+		SELECT DISTINCT t.tname FROM theater t, movie mo, branch br
+		WHERE mo.mcode = t.tmcode and br.bname=t.tname and mo.mcode= #{mCode}
+		and br.blocation= #{bLocation}
+	</select>
+
+	<!--상영하는 상영일 표시 ajax -->
+	<select id="CMF030" parameterType="cmf026dto"
+		resultType="cmf026dto">
+		SELECT DISTINCT bt.bdate FROM bookticket bt, theater t,
+		movie mo
+		WHERE bt.btcode = t.tcode and mo.mcode = t.tmcode and t.tname=
+		#{tName} and
+		mo.mcode= #{mCode} ORDER BY bt.bdate ASC
+	</select>
+
+	<!-- 상영시간표에서 누른 정보로 예매하기 -->
+	<select id="CMF032" parameterType="int" resultType="cmf032dto">
+		SELECT
+		mo.mcode,br.blocation, t.tname, bt.bdate, mo.mtitle,t.tnum FROM
+		bookticket bt, theater t, movie mo, branch br
+		WHERE bt.btcode = t.tcode
+		and mo.mcode = t.tmcode and br.bname=t.tname and
+		bt.bcode=#{bCode}
+		ORDER BY bt.btime ASC
+	</select>
+
+	<!-- 좌석 사이즈 구해오기 -->
+	<select id="CMF034" parameterType="int" resultType="theater">
+		SELECT
+		DISTINCT t.tlineend,t.trowend, t.tsize FROM bookticket bt, theater t
+		WHERE bt.btcode = t.tcode and bt.bcode = #{bCode}
+	</select>
+
+	<!-- 선택한 예매에 대한 정보가져오기 -> 좌석 선택 -->
+	<select id="CMF035" parameterType="int" resultType="movietime">
+		SELECT * FROM
+		BOOKTICKET WHERE BCODE = #{bCode}
+	</select>
+
+	<!-- 티켓가격 구해오기 -->
+	<select id="CMF036" resultType="int">
+		SELECT PPRICE FROM PRICE WHERE
+		PTYPE = '예매'
+	</select>
+
+	<!-- 유저 포인트 구해오기 -->
+	<select id="CMF037" parameterType="String" resultType="int">
+		SELECT
+		MPOINT FROM MEMBERT WHERE MID = #{userId}
+	</select>
+
+	<!-- 이미 예매된 좌석 구해오기 -->
+	<select id="CMF038" resultType="String" parameterType="int">
+		SELECT
+		BSEAT FROM BOOKMOVIE WHERE BCODE = #{bCode}
+	</select>
+
+	<!-- 좌석예매 -->
+	<insert id="CMF039" parameterType="cmf039dto">
+		INSERT INTO BOOKMOVIE VALUES
+		(#{bId}, #{bCode}, #{bSeat}, #{bUUID})
+	</insert>
+
+	<!-- 결제취소 예매 취소시에도 사용 -->
+	<delete id="CMF040" parameterType="String">
+		DELETE FROM BOOKMOVIE WHERE
+		BUUID = #{bUUID}
+	</delete>
+
+	<!-- 상영관초기화시 예매 전부 삭제 -->
+	<delete id="CMF041">
+		DELETE FROM BOOKMOVIE
+	</delete>
+
+	<!-- 좌석예매시 남은좌석 빼주기 -->
+	<update id="CMF042">
+		UPDATE BOOKTICKET SET BSEAT = BSEAT-1 WHERE BCODE =
+		#{bCode}
+	</update>
+
+	<!-- 예매시 포인트 적립 -->
+	<update id="CMF043" parameterType="member">
+		UPDATE MEMBERT SET MPOINT =
+		MPOINT +#{mPoint} WHERE MID = #{mId}
+	</update>
+
+	<!-- 예매된 표들 가져오기 -->
+	<select id="CMF046" parameterType="String"
+		resultType="cmf039dto">
+		SELECT DISTINCT BUUID,BCODE FROM BOOKMOVIE WHERE BID =
+		#{userId}
+	</select>
+
+	<!--상영관시간,날짜 및 상영관 정보 가져오기 CMF047 #{bCode}-->
+	<select id="CMF047" parameterType="int" resultType="cmf047dto">
+		SELECT bt.bdate, bt.btime,t.tname, t.tnum, t.ttype, mo.mtitle, mo.mposter, mo.mcode FROM BOOKTICKET bt,
+		THEATER t, MOVIE mo
+		WHERE bt.btcode = t.tcode and t.tmcode=mo.mcode and bt.bcode = #{bCode}
+	</select>
+	
+	<!-- uuid로 바인딩된 좌석 구해오기 -->
+	<select id="CMF048" parameterType="String" resultType="String">
+		SELECT BSEAT FROM BOOKMOVIE WHERE BUUID = #{buuid} 
+	</select>
+	
+	<!-- 영화 예매순위 가져오기 -->
+	<select id="CMF049" resultType="movie">
+		SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY BSC DESC) NUM, BOXOFFICE.* FROM BOXOFFICE ORDER BY BSC DESC) WHERE NUM BETWEEN 0 AND 10
+	</select>
+	
+	<!-- 영화 좋아요순위 가져오기 -->
+		<select id="CMF050" resultType="movie">
+		SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY MLIKE DESC) NUM, LIKELIST.* FROM LIKELIST ORDER BY MLIKE DESC) WHERE NUM BETWEEN 0 AND 10
+	</select>
+	
+</mapper>

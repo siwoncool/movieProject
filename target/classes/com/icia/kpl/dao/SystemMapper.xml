@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="System">
+
+	<!-- 고객센터 글 작성 -->
+	<insert id="SMF003" parameterType="customer">
+		INSERT INTO CSERVICE
+		VALUES(CCODE_SEQ.NEXTVAL, #{cId}, #{cTitle},
+		#{cContent}, ' ',
+		#{cOpen},'답변 전')
+	</insert>
+
+	<!-- 고객센터 글 상세보기 -->
+	<select id="SMF004" resultType="customer" parameterType="int">
+		SELECT *
+		FROM CSERVICE WHERE CCODE = #{cCode}
+	</select>
+
+	<!-- 고객센터 전체 게시글 갯수(페이징 처리) -->
+	<select id="SMF005" resultType="int">
+		SELECT COUNT(*) FROM CSERVICELIST
+	</select>
+
+	<!-- 고객센터 리스트 가져오기 -->
+	<select id="SMF001" parameterType="paging" resultType="customer">
+		SELECT *
+		FROM CSERVICELIST WHERE RN BETWEEN #{startRow} AND #{endRow}
+	</select>
+
+	<!-- 고객센터 글 수정 -->
+	<update id="SMF007" parameterType="customer">
+		UPDATE CSERVICE SET CANSWER1 =
+		#{cAnswer1}, CANSWER2 = '답변완료' WHERE CCODE = #{cCode}
+	</update>
+
+	<!-- 고객센터 글 삭제 -->
+	<delete id="SMF008" parameterType="int">
+		DELETE FROM CSERVICE WHERE
+		CCODE = #{cCode}
+	</delete>
+
+	<!-- 이벤트게시물 불러오기 -->
+	<select id="SMF009" resultType="offevent">
+		SELECT * FROM EVENT
+	</select>
+
+	<!-- 이벤트게시물 상세보기 -->
+	<select id="SMF010" parameterType="int" resultType="offevent">
+		SELECT * FROM
+		EVENT WHERE ENUM = #{eNum}
+	</select>
+
+	<!-- 이벤트게시물 작성하기 -->
+	<insert id="SMF012" parameterType="offevent">
+		INSERT INTO EVENT
+		VALUES(EVENT_SEQ.NEXTVAL,#{eTitle},#{eImg},#{eContent},#{Copon})
+	</insert>
+	<!-- 쿠폰 등록하기 -->
+	<insert id="SMF013" parameterType="cupon">
+		INSERT INTO CUPON
+		VALUES(#{cName},#{cId},#{cUuid})
+	</insert>
+	<!-- 이벤트 게시물 삭제하기 -->
+	<delete id="SMF014" parameterType="int">
+		DELETE FROM EVENT WHERE ENUM =
+		#{eNum}
+	</delete>
+
+	<!-- 가격설정 폼이동 상품타입 미리 만들어둔게 있으면 가져오기 -->
+	<select id="SMF015" resultType="price">
+		SELECT PTYPE FROM PRICE
+	</select>
+	<!-- 상품등록 -->
+	<insert id="SMF016" parameterType="price">
+		INSERT INTO PRICE
+		VALUES(#{pName},#{pType},${pPrice},${pDc},#{pImgName})
+	</insert>
+	<!-- 상품이름 중복 확인 -->
+	<select id="SMF017" parameterType="String" resultType="String">
+		SELECT
+		PNAME FROM PRICE WHERE PNAME= #{pName}
+	</select>
+	<!-- 상품리스트 가져오기 -->
+	<select id="SMF018" resultType="price">
+		SELECT * FROM PRICE
+	</select>
+	<!-- 상품수정페이지 넘겨줄 값 -->
+	<select id="SMF019" parameterType="String" resultType="price">
+		SELECT *
+		FROM PRICE WHERE PNAME= #{pName}
+	</select>
+	<!-- 상품수정 -->
+	<update id="SMF020" parameterType="price">
+		UPDATE PRICE SET PPRICE =
+		#{pPrice} , PDC = #{pDc} , PIMGNAME = #{pImgName} WHERE PNAME =
+		#{pName}
+	</update>
+	<!-- 상품삭제 -->
+	<delete id="SMF021" parameterType="String">
+		DELETE FROM PRICE WHERE PNAME =
+		#{pName}
+	</delete>
+	
+	<!-- 기존에 예매 타입이 있나 확인 -->
+	<select id="SMF024" resultType="int" parameterType="String">
+		SELECT COUNT(*) FROM PRICE WHERE PTYPE = #{pType}
+	</select>
+	
+	<!-- 기존에 예매 타입이 있다면 삭제 -->
+	<delete id="SMF025" parameterType="String">
+		DELETE FROM PRICE WHERE PTYPE =
+		#{pType}
+	</delete>
+	
+	<!-- 적립금 가져오기 -->
+	<select id="SMF026" parameterType="String" resultType="int">
+		SELECT MPOINT FROM MEMBERT WHERE MID = #{userId}
+	</select>
+	
+	<!-- 포인트 적립 -->
+	<update id="SMF027" parameterType="member">
+		UPDATE MEMBERT SET MPOINT = MPOINT+#{mPoint} WHERE MID = #{mId}
+	</update>
+
+</mapper>
